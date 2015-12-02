@@ -69,6 +69,10 @@ public class AllowMe {
         return ContextCompat.checkSelfPermission(safeActivity(), permission) == PackageManager.PERMISSION_GRANTED;
     }
 
+    public static boolean shouldShowRational(@NonNull String permission) {
+        return ActivityCompat.shouldShowRequestPermissionRationale(safeActivity(), permission);
+    }
+
     public static void dispatchResult(String[] permissions, int[] grantResults) {
         synchronized (getRequestQueue()) {
             // get all the permission keys
