@@ -88,7 +88,7 @@ public class AllowMe {
     public static boolean dispatchResult(int requestCode, String[] permissions, int[] grantResults) {
         synchronized (getRequestQueue()) {
             // get all the permission keys
-            final String cacheKey = getCacheKey(requestCode, permissions);
+            final String cacheKey = getRequestKey(requestCode, permissions);
             // get all registered callbacks for the key
             final ArrayList<AllowMeCallback> callbacks = getRequestQueue().get(cacheKey);
 
@@ -159,21 +159,28 @@ public class AllowMe {
             @NonNull String... permissions) {
 
         synchronized (getRequestQueue()) {
-            final String cacheKey = getCacheKey(requestCode, permissions);
-            ArrayList<AllowMeCallback> callbackList = getRequestQueue().get(cacheKey);
+            final String requestKey = getRequestKey(requestCode, permissions);
+            ArrayList<AllowMeCallback> callbackList = getRequestQueue().get(requestKey);
             if (callbackList != null) {
                 callbackList.add(callback);
             } else {
                 callbackList = new ArrayList<>();
                 callbackList.add(callback);
-                getRequestQueue().put(cacheKey, callbackList);
+                getRequestQueue().put(requestKey, callbackList);
 
                 ActivityCompat.requestPermissions(safeActivity(), permissions, requestCode);
             }
         }
     }
 
-    private static String getCacheKey(int requestCode, String[] permissions) {
+    /**
+     * Generates a key given the permissions requested and its request code
+     *
+     * @param requestCode request code identifier
+     * @param permissions permissions
+     * @return generated request key
+     */
+    private static String getRequestKey(int requestCode, String[] permissions) {
         StringBuilder result = new StringBuilder();
         result.append(requestCode);
         for (String perm : permissions) {
