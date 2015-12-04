@@ -66,6 +66,10 @@ are enough.
  - `requestCode` is an integer to identify the request
  - `rational` is the string message to show when the user denies the permission for the first time
 
+The library makes sure that `onPermissionResult` is only called when the `requestCode` matches the user
+input request code. Anyway, the `requestCode` is also returned in the callback in case the user
+wants to double check. Better safe than sorry they say.
+
 And that's all it takes.
 
 It is also possible to request the permissions inside fragments, just extend the parent activity from
