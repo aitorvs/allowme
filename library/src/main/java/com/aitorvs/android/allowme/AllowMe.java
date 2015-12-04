@@ -17,6 +17,8 @@ package com.aitorvs.android.allowme;
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -94,6 +96,30 @@ public class AllowMe {
         }
     }
 
+    public static void requestPermissionWithRational(
+            @NonNull final AllowMeCallback callback,
+            final int requestId,
+            @NonNull String rational,
+            @NonNull final String permission) {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(safeActivity(), permission)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(safeActivity(), 0)
+                    .setTitle("")
+                    .setMessage(rational)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            requestPermissions(callback, requestId, permission);
+                        }
+                    })
+                    .setNegativeButton("Cancel", null);
+
+            builder.show();
+        } else {
+            requestPermissions(callback, requestId, permission);
+        }
+    }
+
     public static void requestPermissions(
             @NonNull AllowMeCallback callback,
             final int requestId,
@@ -101,13 +127,13 @@ public class AllowMe {
 
         synchronized (getRequestQueue()) {
             final String cacheKey = getCacheKey(permissions);
-            ArrayList<AllowMeCallback> stack = getRequestQueue().get(cacheKey);
-            if (stack != null) {
-                stack.add(callback);
+            ArrayList<AllowMeCallback> callbackList = getRequestQueue().get(cacheKey);
+            if (callbackList != null) {
+                callbackList.add(callback);
             } else {
-                stack = new ArrayList<>(2);
-                stack.add(callback);
-                getRequestQueue().put(cacheKey, stack);
+                callbackList = new ArrayList<>(2);
+                callbackList.add(callback);
+                getRequestQueue().put(cacheKey, callbackList);
 
                 ActivityCompat.requestPermissions(safeActivity(), permissions, requestId);
             }
@@ -123,7 +149,7 @@ public class AllowMe {
         return result.toString();
     }
 
-    public static Map<String, ArrayList<AllowMeCallback>> getRequestQueue() {
+    private static Map<String, ArrayList<AllowMeCallback>> getRequestQueue() {
         return getInstance().mRequestList;
     }
 }
