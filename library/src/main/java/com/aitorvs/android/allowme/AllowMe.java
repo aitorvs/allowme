@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -53,7 +54,7 @@ public class AllowMe {
 
     }
 
-    public static void unregisterActivity(Activity activity) {
+    public static void unregisterActivity(@NonNull Activity activity) {
         getInstance().mActivity = null;
 
     }
@@ -128,7 +129,7 @@ public class AllowMe {
 
     public static void requestPermission(
             @NonNull final AllowMeCallback callback,
-            final int requestId,
+            @IntRange(from = 1, to = Integer.MAX_VALUE) final int requestId,
             @NonNull final String permission) {
 
         // healthy check
@@ -139,7 +140,7 @@ public class AllowMe {
 
     private static void requestPermissions(
             @NonNull AllowMeCallback callback,
-            final int requestId,
+            @IntRange(from = 1, to = Integer.MAX_VALUE) final int requestId,
             @NonNull String... permissions) {
 
         synchronized (getRequestQueue()) {
@@ -148,7 +149,7 @@ public class AllowMe {
             if (callbackList != null) {
                 callbackList.add(callback);
             } else {
-                callbackList = new ArrayList<>(2);
+                callbackList = new ArrayList<>();
                 callbackList.add(callback);
                 getRequestQueue().put(cacheKey, callbackList);
 
