@@ -68,6 +68,9 @@ are enough.
 
 And that's all it takes.
 
+It is also possible to request the permissions inside fragments, just extend the parent activity from
+`AllowMeActivity` and steps above remain the same.
+
 ## License
 
  Apache 2.0
