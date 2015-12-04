@@ -76,10 +76,19 @@ public class AllowMe {
         return ActivityCompat.shouldShowRequestPermissionRationale(safeActivity(), permission);
     }
 
-    public static void dispatchResult(int requestCode, String[] permissions, int[] grantResults) {
+    /**
+     * Dispatches the permission request to the user handler
+     *
+     * @param requestCode  permission request code
+     * @param permissions  permissions
+     * @param grantResults request results
+     * @return boolean Return <code>false</code> to allow normal menu processing to
+     * proceed, <code>true</code> to consume it here.
+     */
+    public static boolean dispatchResult(int requestCode, String[] permissions, int[] grantResults) {
         synchronized (getRequestQueue()) {
             // get all the permission keys
-            final String cacheKey = getCacheKey(permissions);
+            final String cacheKey = getCacheKey(requestCode, permissions);
             // get all registered callbacks for the key
             final ArrayList<AllowMeCallback> callbacks = getRequestQueue().get(cacheKey);
 
@@ -93,7 +102,13 @@ public class AllowMe {
 
                 // now remove the request from the queue
                 getRequestQueue().remove(cacheKey);
+
+                // consume the event here
+                return true;
             }
+
+            // no callback called, event not consumed here.
+            return false;
         }
     }
 
@@ -140,11 +155,11 @@ public class AllowMe {
 
     private static void requestPermissions(
             @NonNull AllowMeCallback callback,
-            @IntRange(from = 1, to = Integer.MAX_VALUE) final int requestId,
+            @IntRange(from = 1, to = Integer.MAX_VALUE) final int requestCode,
             @NonNull String... permissions) {
 
         synchronized (getRequestQueue()) {
-            final String cacheKey = getCacheKey(permissions);
+            final String cacheKey = getCacheKey(requestCode, permissions);
             ArrayList<AllowMeCallback> callbackList = getRequestQueue().get(cacheKey);
             if (callbackList != null) {
                 callbackList.add(callback);
@@ -153,13 +168,14 @@ public class AllowMe {
                 callbackList.add(callback);
                 getRequestQueue().put(cacheKey, callbackList);
 
-                ActivityCompat.requestPermissions(safeActivity(), permissions, requestId);
+                ActivityCompat.requestPermissions(safeActivity(), permissions, requestCode);
             }
         }
     }
 
-    private static String getCacheKey(String[] permissions) {
+    private static String getCacheKey(int requestCode, String[] permissions) {
         StringBuilder result = new StringBuilder();
+        result.append(requestCode);
         for (String perm : permissions) {
             result.append(perm);
             result.append("\0");
