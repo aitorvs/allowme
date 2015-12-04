@@ -34,7 +34,7 @@ are enough.
 
 ## Usage
 
-1. Extend your activity from AllowMeActivity
+1. Extend your activity from AllowMeActivity (which extends `AppCompatActivity`)
  
  ```java
  public class MyPermissionsActivity extends AllowMeActivity {
