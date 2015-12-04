@@ -94,10 +94,10 @@ public class AllowMe {
 
             // no callbacks return
             if (callbacks != null) {
-                final PermissionResultSet resultBucket = PermissionResultSet.create(permissions, grantResults);
+                final PermissionResultSet resultSet = PermissionResultSet.create(permissions, grantResults);
 
                 for (AllowMeCallback callback : callbacks) {
-                    callback.onPermissionResult(requestCode, resultBucket);
+                    callback.onPermissionResult(requestCode, resultSet);
                 }
 
                 // now remove the request from the queue
