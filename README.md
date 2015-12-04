@@ -58,7 +58,7 @@ are enough.
                 }
             }, requestCode, rational, permission);
         } else {
-            onPermissionGranted();
+            //... handle permission already granted
         }
 ```
 
