@@ -21,18 +21,18 @@ import android.support.annotation.NonNull;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PermissionResultBucket {
+public class PermissionResultSet {
     private final PermissionResult[] mResults;
 
-    private PermissionResultBucket(PermissionResult[] results) {
+    private PermissionResultSet(PermissionResult[] results) {
         mResults = results;
     }
 
-    protected static PermissionResultBucket create(@NonNull String[] permissions, int[] grantResults) {
+    protected static PermissionResultSet create(@NonNull String[] permissions, int[] grantResults) {
         PermissionResult[] results = new PermissionResult[permissions.length];
         for (int i = 0; i < permissions.length; i++)
             results[i] = new PermissionResult(permissions[i], grantResults[i]);
-        return new PermissionResultBucket(results);
+        return new PermissionResultSet(results);
     }
 
     public Map<String, Boolean> getGrantedMap() {

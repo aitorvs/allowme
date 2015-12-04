@@ -17,5 +17,5 @@ package com.aitorvs.android.allowme;
  */
 
 public interface AllowMeCallback {
-    void onPermissionResult(PermissionResultBucket results);
+    void onPermissionResult(PermissionResultSet results);
 }

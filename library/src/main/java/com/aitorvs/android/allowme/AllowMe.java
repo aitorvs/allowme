@@ -84,7 +84,7 @@ public class AllowMe {
 
             // no callbacks return
             if (callbacks != null) {
-                final PermissionResultBucket resultBucket = PermissionResultBucket.create(permissions, grantResults);
+                final PermissionResultSet resultBucket = PermissionResultSet.create(permissions, grantResults);
 
                 for (AllowMeCallback callback : callbacks) {
                     callback.onPermissionResult(resultBucket);
@@ -101,6 +101,12 @@ public class AllowMe {
             final int requestId,
             @NonNull String rational,
             @NonNull final String permission) {
+
+        // healthy check
+        if (isPermissionGranted(permission)) {
+            // permission is already granted...why you ask?
+            return;
+        }
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(safeActivity(), permission)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(safeActivity(), 0)
@@ -120,7 +126,18 @@ public class AllowMe {
         }
     }
 
-    public static void requestPermissions(
+    public static void requestPermission(
+            @NonNull final AllowMeCallback callback,
+            final int requestId,
+            @NonNull final String permission) {
+
+        // healthy check
+        if (!isPermissionGranted(permission)) {
+            requestPermissions(callback, requestId, permission);
+        }
+    }
+
+    private static void requestPermissions(
             @NonNull AllowMeCallback callback,
             final int requestId,
             @NonNull String... permissions) {
