@@ -62,9 +62,9 @@ are enough.
         }
 ```
 
-    - `permission` is the permission you need to request
-    - `requestCode` is an integer to identify the request
-    - `rational` is the string message to show when the user denies the permission for the first time
+ - `permission` is the permission you need to request
+ - `requestCode` is an integer to identify the request
+ - `rational` is the string message to show when the user denies the permission for the first time
 
 And that's all it takes.
 
