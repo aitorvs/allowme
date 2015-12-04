@@ -17,5 +17,11 @@ package com.aitorvs.android.allowme;
  */
 
 public interface AllowMeCallback {
-    void onPermissionResult(PermissionResultSet results);
+    /**
+     * Permission callback
+     *
+     * @param requestCode User request code passed when asking for permission
+     * @param results     permission request results
+     */
+    void onPermissionResult(int requestCode, PermissionResultSet results);
 }

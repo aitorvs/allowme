@@ -75,7 +75,7 @@ public class AllowMe {
         return ActivityCompat.shouldShowRequestPermissionRationale(safeActivity(), permission);
     }
 
-    public static void dispatchResult(String[] permissions, int[] grantResults) {
+    public static void dispatchResult(int requestCode, String[] permissions, int[] grantResults) {
         synchronized (getRequestQueue()) {
             // get all the permission keys
             final String cacheKey = getCacheKey(permissions);
@@ -87,7 +87,7 @@ public class AllowMe {
                 final PermissionResultSet resultBucket = PermissionResultSet.create(permissions, grantResults);
 
                 for (AllowMeCallback callback : callbacks) {
-                    callback.onPermissionResult(resultBucket);
+                    callback.onPermissionResult(requestCode, resultBucket);
                 }
 
                 // now remove the request from the queue

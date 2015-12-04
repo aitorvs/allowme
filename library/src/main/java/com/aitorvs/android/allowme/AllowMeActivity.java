@@ -41,7 +41,8 @@ public class AllowMeActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        // FIXME: 04/12/15 should I call super here?
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        AllowMe.dispatchResult(permissions, grantResults);
+        AllowMe.dispatchResult(requestCode, permissions, grantResults);
     }
 }
