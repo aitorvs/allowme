@@ -68,10 +68,24 @@ public class AllowMe {
         return activity;
     }
 
+    /**
+     * Checks whether a particular permissions is already granted
+     *
+     * @param permission permission
+     * @return <code>boolean</code> value, <code>true</code> when permissions is already granted,
+     * <code>false</code> when permissions not granted.
+     */
     public static boolean isPermissionGranted(@NonNull String permission) {
         return ContextCompat.checkSelfPermission(safeActivity(), permission) == PackageManager.PERMISSION_GRANTED;
     }
 
+    /**
+     * Checks whether user should show the permissions request rational or not
+     *
+     * @param permission permission
+     * @return Returns <code>boolean</code> with value <code>true</code> when rational should be shown
+     * or <code>false</code> otherwise
+     */
     public static boolean shouldShowRational(@NonNull String permission) {
         return ActivityCompat.shouldShowRequestPermissionRationale(safeActivity(), permission);
     }
@@ -112,9 +126,18 @@ public class AllowMe {
         }
     }
 
+    /**
+     * Requests the permission, showing the given rational when necessary and calls the registered
+     * callback when permission request operation is performed
+     *
+     * @param callback    {@link AllowMeCallback} callback method
+     * @param requestCode request code identifier
+     * @param rational    string rational to be shown when appropriate
+     * @param permission  permission under request
+     */
     public static void requestPermissionWithRational(
             @NonNull final AllowMeCallback callback,
-            @IntRange(from = 1, to = Integer.MAX_VALUE) final int requestId,
+            @IntRange(from = 1, to = Integer.MAX_VALUE) final int requestCode,
             @NonNull String rational,
             @NonNull final String permission) {
 
@@ -131,25 +154,33 @@ public class AllowMe {
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            requestPermissions(callback, requestId, permission);
+                            requestPermissions(callback, requestCode, permission);
                         }
                     })
                     .setNegativeButton("Cancel", null);
 
             builder.show();
         } else {
-            requestPermissions(callback, requestId, permission);
+            requestPermissions(callback, requestCode, permission);
         }
     }
 
+    /**
+     * Requests the permission, and calls the registered callback when permission request operation
+     * is performed
+     *
+     * @param callback    callback method
+     * @param requestCode request code identifier
+     * @param permission  permission to request
+     */
     public static void requestPermission(
             @NonNull final AllowMeCallback callback,
-            @IntRange(from = 1, to = Integer.MAX_VALUE) int requestId,
+            @IntRange(from = 1, to = Integer.MAX_VALUE) int requestCode,
             @NonNull final String permission) {
 
         // healthy check
         if (!isPermissionGranted(permission)) {
-            requestPermissions(callback, requestId, permission);
+            requestPermissions(callback, requestCode, permission);
         }
     }
 
