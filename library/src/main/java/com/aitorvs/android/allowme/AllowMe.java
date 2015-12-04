@@ -114,7 +114,7 @@ public class AllowMe {
 
     public static void requestPermissionWithRational(
             @NonNull final AllowMeCallback callback,
-            final int requestId,
+            @IntRange(from = 1, to = Integer.MAX_VALUE) final int requestId,
             @NonNull String rational,
             @NonNull final String permission) {
 
@@ -144,7 +144,7 @@ public class AllowMe {
 
     public static void requestPermission(
             @NonNull final AllowMeCallback callback,
-            @IntRange(from = 1, to = Integer.MAX_VALUE) final int requestId,
+            @IntRange(from = 1, to = Integer.MAX_VALUE) int requestId,
             @NonNull final String permission) {
 
         // healthy check
@@ -155,7 +155,7 @@ public class AllowMe {
 
     private static void requestPermissions(
             @NonNull AllowMeCallback callback,
-            @IntRange(from = 1, to = Integer.MAX_VALUE) final int requestCode,
+            @IntRange(from = 1, to = Integer.MAX_VALUE) int requestCode,
             @NonNull String... permissions) {
 
         synchronized (getRequestQueue()) {
