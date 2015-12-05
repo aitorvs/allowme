@@ -227,15 +227,11 @@ public class AllowMe {
         return getInstance().mRequestList;
     }
 
-    public class Builder {
+    public static class Builder {
         private String rational;
-        private int rationalThemeId;
+        private int rationalThemeId = 0;
         private String permission;
         private AllowMeCallback callback;
-
-        public Builder() {
-            this.rationalThemeId = 0;
-        }
 
         public Builder setRational(String rational) {
             this.rational = rational;
