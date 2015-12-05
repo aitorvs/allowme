@@ -130,15 +130,17 @@ public class AllowMe {
      * Requests the permission, showing the given rational when necessary and calls the registered
      * callback when permission request operation is performed
      *
-     * @param callback    {@link AllowMeCallback} callback method
-     * @param requestCode request code identifier
-     * @param rational    string rational to be shown when appropriate
-     * @param permission  permission under request
+     * @param callback        {@link AllowMeCallback} callback method
+     * @param requestCode     request code identifier
+     * @param rational        string rational to be shown when appropriate
+     * @param rationalThemeId rational alert dialog theme id
+     * @param permission      permission under request
      */
     public static void requestPermissionWithRational(
             @NonNull final AllowMeCallback callback,
             @IntRange(from = 1, to = Integer.MAX_VALUE) final int requestCode,
             @NonNull String rational,
+            @IntRange(from = 0, to = Integer.MAX_VALUE) int rationalThemeId,
             @NonNull final String permission) {
 
         // healthy check
@@ -148,7 +150,7 @@ public class AllowMe {
         }
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(safeActivity(), permission)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(safeActivity(), 0)
+            AlertDialog.Builder builder = new AlertDialog.Builder(safeActivity(), rationalThemeId)
                     .setTitle("")
                     .setMessage(rational)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -224,4 +226,44 @@ public class AllowMe {
     private static Map<String, ArrayList<AllowMeCallback>> getRequestQueue() {
         return getInstance().mRequestList;
     }
+
+    public class Builder {
+        private String rational;
+        private int rationalThemeId;
+        private String permission;
+        private AllowMeCallback callback;
+
+        public Builder() {
+            this.rationalThemeId = 0;
+        }
+
+        public Builder setRational(String rational) {
+            this.rational = rational;
+            return this;
+        }
+
+        public Builder setRationalThemeId(int rationalThemeId) {
+            this.rationalThemeId = rationalThemeId;
+            return this;
+        }
+
+        public Builder setPermissions(String permissions) {
+            this.permission = permissions;
+            return this;
+        }
+
+        public Builder setCallback(AllowMeCallback callback) {
+            this.callback = callback;
+            return this;
+        }
+
+        public void request(int requestCode) {
+            if (rational == null) {
+                AllowMe.requestPermissions(this.callback, requestCode, this.permission);
+            } else {
+                AllowMe.requestPermissionWithRational(this.callback, requestCode, rational, rationalThemeId, this.permission);
+            }
+        }
+    }
+
 }
