@@ -14,15 +14,12 @@ repositories {
 
 ### Dependency
 
-Note: I haven't release a version yet, it's coming soon. You anyway try a snapshot adding the following
-dependency to your `app/build.gradle`
-
 ```gradle
 dependencies {
 
     // ... other dependencies here
 
-    compile 'com.github.aitorvs:allowme:-SNAPSHOT'
+    compile 'com.github.aitorvs:allowme:0.1.0'
 }
 ```
 --
