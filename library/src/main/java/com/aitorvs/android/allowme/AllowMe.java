@@ -138,11 +138,11 @@ public class AllowMe {
      * @param permission      permission under request
      */
     private static void requestPermissionWithRational(
-            @NonNull final AllowMeCallback callback,
-            @IntRange(from = 1, to = Integer.MAX_VALUE) final int requestCode,
-            @NonNull String rational,
-            @IntRange(from = 0, to = Integer.MAX_VALUE) int rationalThemeId,
-            @NonNull final String permission) {
+            final AllowMeCallback callback,
+            final int requestCode,
+            String rational,
+            int rationalThemeId,
+            final String permission) {
 
         // healthy check
         if (isPermissionGranted(permission)) {
@@ -177,9 +177,9 @@ public class AllowMe {
      * @param permission  permission to request
      */
     private static void requestPermission(
-            @NonNull final AllowMeCallback callback,
-            @IntRange(from = 1, to = Integer.MAX_VALUE) int requestCode,
-            @NonNull final String permission) {
+            final AllowMeCallback callback,
+            int requestCode,
+            final String permission) {
 
         // healthy check
         if (!isPermissionGranted(permission)) {
@@ -188,9 +188,9 @@ public class AllowMe {
     }
 
     private static void requestPermissions(
-            @NonNull AllowMeCallback callback,
-            @IntRange(from = 1, to = Integer.MAX_VALUE) int requestCode,
-            @NonNull String... permissions) {
+            AllowMeCallback callback,
+            int requestCode,
+            String... permissions) {
 
         synchronized (getRequestQueue()) {
             final String requestKey = getRequestKey(requestCode, permissions);
