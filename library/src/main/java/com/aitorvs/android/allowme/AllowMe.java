@@ -25,6 +25,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -136,7 +137,7 @@ public class AllowMe {
      * @param rationalThemeId rational alert dialog theme id
      * @param permission      permission under request
      */
-    public static void requestPermissionWithRational(
+    private static void requestPermissionWithRational(
             @NonNull final AllowMeCallback callback,
             @IntRange(from = 1, to = Integer.MAX_VALUE) final int requestCode,
             @NonNull String rational,
@@ -175,7 +176,7 @@ public class AllowMe {
      * @param requestCode request code identifier
      * @param permission  permission to request
      */
-    public static void requestPermission(
+    private static void requestPermission(
             @NonNull final AllowMeCallback callback,
             @IntRange(from = 1, to = Integer.MAX_VALUE) int requestCode,
             @NonNull final String permission) {
@@ -233,29 +234,34 @@ public class AllowMe {
         private String permission;
         private AllowMeCallback callback;
 
-        public Builder setRational(String rational) {
+        public Builder setRational(@NonNull String rational) {
             this.rational = rational;
             return this;
         }
 
-        public Builder setRationalThemeId(int rationalThemeId) {
+        public Builder setRationalThemeId(@IntRange(from = 0, to = Integer.MAX_VALUE) int rationalThemeId) {
             this.rationalThemeId = rationalThemeId;
             return this;
         }
 
-        public Builder setPermissions(String permissions) {
+        public Builder setPermissions(@NonNull String permissions) {
             this.permission = permissions;
             return this;
         }
 
-        public Builder setCallback(AllowMeCallback callback) {
+        public Builder setCallback(@NonNull AllowMeCallback callback) {
             this.callback = callback;
             return this;
         }
 
-        public void request(int requestCode) {
+        public void request(@IntRange(from = 1, to = Integer.MAX_VALUE) int requestCode) {
+            // some checks
+            if (this.permission == null) {
+                throw new InvalidParameterException("Permissions must be set");
+            }
+
             if (rational == null) {
-                AllowMe.requestPermissions(this.callback, requestCode, this.permission);
+                AllowMe.requestPermission(this.callback, requestCode, this.permission);
             } else {
                 AllowMe.requestPermissionWithRational(this.callback, requestCode, rational, rationalThemeId, this.permission);
             }
