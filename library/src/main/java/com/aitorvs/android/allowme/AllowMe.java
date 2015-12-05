@@ -228,6 +228,9 @@ public class AllowMe {
         return getInstance().mRequestList;
     }
 
+    /**
+     * Builder class
+     */
     public static class Builder {
         private String rational;
         private int rationalThemeId = 0;

@@ -49,22 +49,27 @@ are enough.
         //... more code here
         
         if (!AllowMe.isPermissionGranted(permission)) {
-            AllowMe.requestPermissionWithRational(new AllowMeCallback() {
-                @Override
-                public void onPermissionResult(int requestCode, PermissionResultSet result) {
-                    if (result.isGranted(permission)) {
-                        //... handle your permission here
-                    }
-                }
-            }, requestCode, rational, permission);
+            new AllowMe.Builder()
+                    .setPermissions(permission)
+                    .setRational(rational)
+                    .setRationalThemeId(themeId)
+                    .setCallback(new AllowMeCallback() {
+                        @Override
+                        public void onPermissionResult(int requestCode, PermissionResultSet result) {
+                            if (result.isGranted(Manifest.permission.READ_CONTACTS)) {
+                                onPermissionGranted();
+                            }
+                        }
+                    }).request(requestCode);
         } else {
             //... handle permission already granted
         }
 ```
 
  - `permission` is the permission you need to request
+ - `rational` is optional and it is the string message to show when the user denies the permission for the first time
+ - `themeId` is optional and allows to style the rational alert dialog
  - `requestCode` is an integer to identify the request
- - `rational` is the string message to show when the user denies the permission for the first time
 
 The library makes sure that `onPermissionResult` is only called when the `requestCode` matches the user
 input request code. Anyway, the `requestCode` is also returned in the callback in case the user
