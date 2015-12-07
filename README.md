@@ -53,8 +53,8 @@ are enough.
                     .setCallback(new AllowMeCallback() {
                         @Override
                         public void onPermissionResult(int requestCode, PermissionResultSet result) {
-                            if (result.isGranted(Manifest.permission.READ_CONTACTS)) {
-                                onPermissionGranted();
+                            if (result.isGranted(permission)) {
+                                //... permission is granted, handle here
                             }
                         }
                     }).request(requestCode);
