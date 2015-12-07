@@ -22,6 +22,7 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -245,6 +246,11 @@ public class AllowMe {
 
         public Builder setRational(@NonNull String rational) {
             this.rational = rational;
+            return this;
+        }
+
+        public Builder setRational(@StringRes int res) {
+            this.rational = safeActivity().getString(res);
             return this;
         }
 
