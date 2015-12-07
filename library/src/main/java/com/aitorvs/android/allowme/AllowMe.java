@@ -24,6 +24,7 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import java.util.Map;
 
 public class AllowMe {
 
+    private static final String TAG = AllowMe.class.getSimpleName();
     private static AllowMe instance;
 
     private Activity mActivity;
@@ -56,7 +58,11 @@ public class AllowMe {
     }
 
     public static void unregisterActivity(@NonNull Activity activity) {
-        getInstance().mActivity = null;
+        if (activity == getInstance().mActivity) {
+            getInstance().mActivity = null;
+        } else {
+            Log.w(TAG, "unregisterActivity: Old activity is trying to unregister");
+        }
 
     }
 
