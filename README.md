@@ -77,6 +77,23 @@ And that's all it takes.
 It is also possible to request the permissions inside fragments, just extend the parent activity from
 `AllowMeActivity` and steps above remain the same.
 
+Developed By
+---
+
+Aitor Viana Sanchez - aitor.viana.sanchez@gmail.com>
+
+<a href="https://twitter.com/aitorvs">
+  <img alt="Follow me on Twitter"
+       src="https://raw.github.com/ManuelPeinado/NumericPageIndicator/master/art/twitter.png" />
+</a>
+<a href="https://plus.google.com/+AitorViana">
+  <img alt="Follow me on Twitter"
+       src="https://raw.github.com/ManuelPeinado/NumericPageIndicator/master/art/google-plus.png" />
+</a>
+<a href="https://www.linkedin.com/in/aitorvs">
+  <img alt="Follow me on Twitter"
+       src="https://raw.github.com/ManuelPeinado/NumericPageIndicator/master/art/linkedin.png" />
+       
 ## License
 
  Apache 2.0
