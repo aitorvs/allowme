@@ -37,6 +37,7 @@ import java.util.Map;
 public class AllowMe {
 
     private static final String TAG = AllowMe.class.getSimpleName();
+    private static final String ALLOWME_SHOULD_SHOW_PRIMING_KEY = TAG + ".key.should_show_priming";
     private static AllowMe instance;
 
     private Activity mActivity;
@@ -314,10 +315,10 @@ public class AllowMe {
 
         public boolean shouldShowPrimingMessage() {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(safeActivity());
-            boolean value = sharedPreferences.getBoolean("should_show_priming", true);
+            boolean value = sharedPreferences.getBoolean(ALLOWME_SHOULD_SHOW_PRIMING_KEY, true);
 
             // we've been called, set it to false again
-            sharedPreferences.edit().putBoolean("should_show_priming", false).apply();
+            sharedPreferences.edit().putBoolean(ALLOWME_SHOULD_SHOW_PRIMING_KEY, false).apply();
 
             return value;
         }
