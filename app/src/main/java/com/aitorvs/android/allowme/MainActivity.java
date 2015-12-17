@@ -28,7 +28,8 @@ public class MainActivity extends AllowMeActivity {
                 if (!AllowMe.isPermissionGranted(mPermission)) {
                     new AllowMe.Builder()
                             .setPermissions(mPermission)
-                            .setRational("I need the permission for the demo")
+                            .setPrimingMessage("Do you want the demo to have read access to your contacts?")
+                            .setRational("I need read access to contacts for the demo")
                             .setCallback(new AllowMeCallback() {
                                 @Override
                                 public void onPermissionResult(int i, PermissionResultSet result) {

@@ -4,6 +4,9 @@ AllowMe simple library to handle Android M permissions easily.
  
 # Gradle Dependency
 
+[![Release](https://img.shields.io/github/release/aitorvs/allowme.svg?label=jitpack)](https://jitpack.io/#aitorvs/allowme)
+
+
 ### Repository
 
 ```gradle
