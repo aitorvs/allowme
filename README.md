@@ -52,6 +52,7 @@ are enough.
             new AllowMe.Builder()
                     .setPermissions(permission)
                     .setRational(rational)
+                    .setPrimingMessage(primingMessage)
                     .setRationalThemeId(themeId)
                     .setCallback(new AllowMeCallback() {
                         @Override
@@ -68,6 +69,8 @@ are enough.
 
  - `permission` is the permission you need to request
  - `rational` is optional and it is the string message to show when the user denies the permission for the first time
+ - `primingMessage` is optional and sets the permission priming message dialog that is showed prior to request the permission. 
+ In some cases where the dialog requesting the permission appears without any further notice and without enough context, permission priming will help you to put the user in context.
  - `themeId` is optional and allows to style the rational alert dialog
  - `requestCode` is an integer to identify the request
 
