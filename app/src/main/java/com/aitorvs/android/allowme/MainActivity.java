@@ -21,14 +21,38 @@ public class MainActivity extends AllowMeActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Button button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button buttonPriming = (Button) findViewById(R.id.button_priming);
+        buttonPriming.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!AllowMe.isPermissionGranted(mPermission)) {
                     new AllowMe.Builder()
                             .setPermissions(mPermission)
                             .setPrimingMessage("Do you want the demo to have read access to your contacts?")
+                            .setRational("I need read access to contacts for the demo")
+                            .setCallback(new AllowMeCallback() {
+                                @Override
+                                public void onPermissionResult(int i, PermissionResultSet result) {
+                                    if (result.isGranted(mPermission)) {
+                                        Toast.makeText(MainActivity.this, "Permission granted", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(MainActivity.this, "Permission denied", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }).request(69);
+                } else {
+                    Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        Button buttonNoPriming = (Button) findViewById(R.id.button_no_priming);
+        buttonNoPriming.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!AllowMe.isPermissionGranted(mPermission)) {
+                    new AllowMe.Builder()
+                            .setPermissions(mPermission)
                             .setRational("I need read access to contacts for the demo")
                             .setCallback(new AllowMeCallback() {
                                 @Override
