@@ -19,7 +19,9 @@ package com.aitorvs.android.allowme;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
@@ -282,7 +284,7 @@ public class AllowMe {
             }
 
             // permission priming ?
-            if (this.primingMessage != null) {
+            if (this.primingMessage != null && shouldShowPrimingMessage()) {
                 // show the priming message
                 AlertDialog.Builder builder = new AlertDialog.Builder(safeActivity(), rationalThemeId)
                         .setTitle("")
@@ -296,7 +298,7 @@ public class AllowMe {
                         .setNegativeButton("Not now", null);
 
                 builder.show();
-            } else {
+            } else if (this.primingMessage == null){
                 // request permission directly
                 requestPermission(requestCode);
             }
@@ -308,6 +310,16 @@ public class AllowMe {
             } else {
                 AllowMe.requestPermissionWithRational(this.callback, requestCode, rational, rationalThemeId, this.permission);
             }
+        }
+
+        public boolean shouldShowPrimingMessage() {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(safeActivity());
+            boolean value = sharedPreferences.getBoolean("should_show_priming", true);
+
+            // we've been called, set it to false again
+            sharedPreferences.edit().putBoolean("should_show_priming", false).apply();
+
+            return value;
         }
     }
 
