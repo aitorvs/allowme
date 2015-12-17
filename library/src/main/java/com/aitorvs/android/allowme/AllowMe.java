@@ -167,7 +167,7 @@ public class AllowMe {
                             requestPermissions(callback, requestCode, permission);
                         }
                     })
-                    .setNegativeButton("Cancel", null);
+                    .setNegativeButton("Don't allow", null);
 
             builder.show();
         } else {
@@ -243,6 +243,7 @@ public class AllowMe {
         private int rationalThemeId = 0;
         private String permission;
         private AllowMeCallback callback;
+        private String primingMessage;
 
         public Builder setRational(@NonNull String rational) {
             this.rational = rational;
@@ -269,12 +270,39 @@ public class AllowMe {
             return this;
         }
 
-        public void request(@IntRange(from = 1, to = Integer.MAX_VALUE) int requestCode) {
+        public Builder setPrimingMessage(String primingMessage) {
+            this.primingMessage = primingMessage;
+            return this;
+        }
+
+        public void request(@IntRange(from = 1, to = Integer.MAX_VALUE) final int requestCode) {
             // some checks
             if (this.permission == null) {
                 throw new InvalidParameterException("Permissions must be set");
             }
 
+            // permission priming ?
+            if (this.primingMessage != null) {
+                // show the priming message
+                AlertDialog.Builder builder = new AlertDialog.Builder(safeActivity(), rationalThemeId)
+                        .setTitle("")
+                        .setMessage(this.primingMessage)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                requestPermission(requestCode);
+                            }
+                        })
+                        .setNegativeButton("Not now", null);
+
+                builder.show();
+            } else {
+                // request permission directly
+                requestPermission(requestCode);
+            }
+        }
+
+        private void requestPermission(int requestCode) {
             if (rational == null) {
                 AllowMe.requestPermission(this.callback, requestCode, this.permission);
             } else {
