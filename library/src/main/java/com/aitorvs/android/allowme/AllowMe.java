@@ -170,7 +170,7 @@ public class AllowMe {
                             requestPermissions(callback, requestCode, permission);
                         }
                     })
-                    .setNegativeButton("Cancel", null);
+                    .setNegativeButton("Not Now", null);
 
             builder.show();
         } else {
