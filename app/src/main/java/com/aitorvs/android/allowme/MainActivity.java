@@ -69,6 +69,29 @@ public class MainActivity extends AllowMeActivity {
                 }
             }
         });
+
+        Button buttonAnnotated = (Button) findViewById(R.id.button_annotated);
+        buttonAnnotated.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!AllowMe.isPermissionGranted(mPermission)) {
+                    new AllowMe.Builder()
+                            .setPermissions(mPermission)
+                            .setRational("I need read access to contacts for the demo")
+                            .request(MainActivity.this, 69);
+                } else {
+                    Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
+    @OnPermissionResult(requestedPermissions = {Manifest.permission.READ_CONTACTS})
+    void onPermissionRequested(int requestCode, PermissionResultSet result) {
+        if (result.isGranted(mPermission)) {
+            Toast.makeText(MainActivity.this, "'Annotated' Permission granted", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(MainActivity.this, "'Annotated' Permission denied", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

@@ -38,6 +38,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Request without priming" />
+
+        <Button
+            android:id="@+id/button_annotated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Request annotated" />
     </LinearLayout>
 
 
