@@ -83,6 +83,48 @@ And that's all it takes.
 It is also possible to request the permissions inside fragments, just extend the parent activity from
 `AllowMeActivity` and steps above remain the same.
 
+# Use annotated methods instead of callbacks
+
+It is possible to, instead of using callback methods, use annotations to define the method to be called
+when the permission request is performed.
+
+```java
+    
+    public class MyActivity extends AllowMeActivity {
+        
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            
+            //... more code here
+            
+            int requestCode = 69;
+            if (!AllowMe.isPermissionGranted(Manifest.permission.READ_CONTACTS)) {
+                new AllowMe.Builder()
+                        .setPermissions(Manifest.permission.READ_CONTACTS)
+                        .setRational(rational)
+                        .setPrimingMessage(primingMessage)
+                        .setRationalThemeId(themeId)
+                        .request(MyActivity.this, requestCode);
+            } else {
+                //... handle permission already granted
+            }
+        }
+                
+        @OnPermissionResult(requestedPermissions = {Manifest.permission.READ_CONTACTS})
+        void permissionRequestHandler(int requestCode, PermissionResultSet result) {
+            //... handle result
+        }
+    }
+```
+
+The annotation `OnPermissionResult` an array of permissions in its param `requestedPermissions`.
+
+Note that the `request` call of the Builder pattern also receives a first param which is the class that
+will contain the annotated method.
+
+The library will then call the annotated method to handle the permission request.
+
 Developed By
 ---
 

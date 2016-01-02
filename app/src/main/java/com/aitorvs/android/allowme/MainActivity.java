@@ -87,7 +87,7 @@ public class MainActivity extends AllowMeActivity {
     }
 
     @OnPermissionResult(requestedPermissions = {Manifest.permission.READ_CONTACTS})
-    void onPermissionRequested(int requestCode, PermissionResultSet result) {
+    void permissionRequestHandler(int requestCode, PermissionResultSet result) {
         if (result.isGranted(mPermission)) {
             Toast.makeText(MainActivity.this, "'Annotated' Permission granted", Toast.LENGTH_SHORT).show();
         } else {
