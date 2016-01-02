@@ -29,8 +29,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -248,41 +251,82 @@ public class AllowMe {
         private AllowMeCallback callback;
         private String primingMessage;
 
+        /**
+         * Set the permission rational message
+         *
+         * @param rational {@link String} rational
+         * @return {@link Builder}
+         */
         public Builder setRational(@NonNull String rational) {
             this.rational = rational;
             return this;
         }
 
+        /**
+         * Sset the permission rational
+         *
+         * @param res Rational string resource ID
+         * @return {@link Builder}
+         */
         public Builder setRational(@StringRes int res) {
             this.rational = safeActivity().getString(res);
             return this;
         }
 
+        /**
+         * Set the rational dialog theme
+         *
+         * @param rationalThemeId identifier
+         * @return {@link Builder}
+         */
         public Builder setRationalThemeId(@IntRange(from = 0, to = Integer.MAX_VALUE) int rationalThemeId) {
             this.rationalThemeId = rationalThemeId;
             return this;
         }
 
+        /**
+         * Set the permission to request
+         *
+         * @param permissions permissions
+         * @return {@link Builder}
+         */
         public Builder setPermissions(@NonNull String permissions) {
             this.permission = permissions;
             return this;
         }
 
+        /**
+         * Set the callback to be call once the permissions are granted
+         *
+         * @param callback {@link AllowMeCallback} callback
+         * @return {@link Builder}
+         */
         public Builder setCallback(@NonNull AllowMeCallback callback) {
             this.callback = callback;
             return this;
         }
 
+        /**
+         * Set the permission priming message that will be shown before the permission is request
+         * (Optional)
+         *
+         * @param primingMessage priming message {@link String}
+         * @return {@link Builder}
+         */
         public Builder setPrimingMessage(String primingMessage) {
             this.primingMessage = primingMessage;
             return this;
         }
 
+        /**
+         * Request the permissions set using the Builder
+         *
+         * @param requestCode positive <code>int</code> value to identify the permission request
+         */
         public void request(@IntRange(from = 1, to = Integer.MAX_VALUE) final int requestCode) {
             // some checks
-            if (this.permission == null) {
-                throw new InvalidParameterException("Permissions must be set");
-            }
+            throwIfNoPermissions();
+            throwIfNoCallback();
 
             // permission priming ?
             if (this.primingMessage != null && shouldShowPrimingMessage()) {
@@ -293,26 +337,143 @@ public class AllowMe {
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                requestPermission(requestCode);
+                                requestPermission(Builder.this.callback, requestCode);
                             }
                         })
                         .setNegativeButton("Not now", null);
 
                 builder.show();
-            } else if (this.primingMessage == null){
+            } else if (this.primingMessage == null || !shouldShowPrimingMessage()) {
                 // request permission directly
-                requestPermission(requestCode);
+                requestPermission(Builder.this.callback, requestCode);
             }
         }
 
-        private void requestPermission(int requestCode) {
+        public void request(final @NonNull Object handlerClass,
+                            @IntRange(from = 1, to = Integer.MAX_VALUE) int requestCode) {
+            // throw when user forgot the permissions
+            throwIfNoPermissions();
+            // we don't need the callbacks here because should be using annotated callback
+            final Method annotatedCallback = getAnnotatedMethod(handlerClass, OnPermissionResult.class);
+            annotatedCallback.setAccessible(true);
+
+            final int fRequestCode = requestCode;
+
+            // do the magic
+            // permission priming ?
+            if (this.primingMessage != null && shouldShowPrimingMessage()) {
+                // show the priming message
+                AlertDialog.Builder builder = new AlertDialog.Builder(safeActivity(), rationalThemeId)
+                        .setTitle("")
+                        .setMessage(this.primingMessage)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                requestPermission(new AllowMeCallback() {
+                                    @Override
+                                    public void onPermissionResult(int requestCode, PermissionResultSet results) {
+                                        try {
+                                            annotatedCallback.invoke(handlerClass, requestCode, results);
+                                        } catch (Exception e) {
+                                            throw new IllegalStateException(String.format("Error invoking %s", annotatedCallback.getName()), e);
+                                        }
+                                    }
+                                }, fRequestCode);
+                            }
+                        })
+                        .setNegativeButton("Not now", null);
+
+                builder.show();
+            } else if (this.primingMessage == null) {
+                // request permission directly
+                requestPermission(new AllowMeCallback() {
+                    @Override
+                    public void onPermissionResult(int requestCode, PermissionResultSet results) {
+                        try {
+                            annotatedCallback.invoke(handlerClass, requestCode, results);
+                        } catch (Exception e) {
+                            throw new IllegalStateException(String.format("Error invoking %s", annotatedCallback.getName()), e);
+                        }
+                    }
+                }, fRequestCode);
+            }
+
+
+        }
+
+        private Method getAnnotatedMethod(Object target, Class<OnPermissionResult> targetAnnotation) {
+            final Method[] targetMethods = target.getClass().getDeclaredMethods();
+            Method match = null;
+            for (Method method : targetMethods) {
+                OnPermissionResult annotation = method.getAnnotation(targetAnnotation);
+                // FIXME: 02/01/16 permissions should eventually be an array
+                if (annotation != null && equalPermissions(new String[]{this.permission}, annotation.requestedPermissions())) {
+                    match = method;
+                    break;
+                }
+            }
+
+            // check the correctness of the annotated method
+            if (match == null) {
+                throw new IllegalStateException(String.format("No OnPermissionResult annotated " +
+                        "methods found in %s or with different permission set parameters.", target.getClass().getName()));
+            } else if (match.getParameterTypes().length != 2
+                    || !match.getParameterTypes()[0].toString().equalsIgnoreCase("int")
+                    || match.getParameterTypes()[1] != PermissionResultSet.class) {
+                throw new IllegalStateException(String.format("Method %s shall have two " +
+                        "parameters of type 'int' and 'PermissionResultSet'", match.getName()));
+            }
+
+            return match;
+        }
+
+        /**
+         * Compare two array of permissions, independent of the order inside the array
+         *
+         * @param foo array of permissions
+         * @param bar array of permissions
+         * @return <code>true</code> when match, <code>false</code> otherwise
+         */
+        private boolean equalPermissions(String[] foo, String[] bar) {
+            if (foo == null || bar == null) {
+                return (foo == null) && (bar == null);
+            } else if (foo.length != bar.length) {
+                return false;
+            }
+
+            // sort the arrays
+            Arrays.sort(foo);
+            Arrays.sort(bar);
+
+            // do the actual compare
+            for (int i = 0; i < foo.length; i++) {
+                if (!foo[i].equals(bar[i]))
+                    return false;
+            }
+            return true;
+        }
+
+        /**
+         * Request the permissions using the {@link Builder} fields and the given params
+         *
+         * @param callback    permission request callback
+         * @param requestCode permission request code identifier
+         */
+        private void requestPermission(AllowMeCallback callback, int requestCode) {
             if (rational == null) {
-                AllowMe.requestPermission(this.callback, requestCode, this.permission);
+                AllowMe.requestPermission(callback, requestCode, this.permission);
             } else {
-                AllowMe.requestPermissionWithRational(this.callback, requestCode, rational, rationalThemeId, this.permission);
+                AllowMe.requestPermissionWithRational(callback, requestCode, rational, rationalThemeId, this.permission);
             }
         }
 
+        /**
+         * Returns whether the permission priming message should be shown.
+         * The method will return <code>true</code> the first call around, so the permission priming
+         * message is shown. After that first call, method will return <code>false</code>
+         *
+         * @return <code>true</code> first call around, <code>false</code> other method calls
+         */
         public boolean shouldShowPrimingMessage() {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(safeActivity());
             boolean value = sharedPreferences.getBoolean(ALLOWME_SHOULD_SHOW_PRIMING_KEY, true);
@@ -321,6 +482,18 @@ public class AllowMe {
             sharedPreferences.edit().putBoolean(ALLOWME_SHOULD_SHOW_PRIMING_KEY, false).apply();
 
             return value;
+        }
+
+        private void throwIfNoPermissions() {
+            if (this.permission == null) {
+                throw new InvalidParameterException("Permissions must be set");
+            }
+        }
+
+        private void throwIfNoCallback() {
+            if (this.callback == null) {
+                throw new InvalidParameterException("Callback must be set");
+            }
         }
     }
 
