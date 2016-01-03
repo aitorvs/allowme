@@ -29,7 +29,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -94,13 +93,13 @@ public class AllowMe {
     }
 
     /**
-     * Checks whether user should show the permissions request rational or not
+     * Checks whether user should show the permissions request rationale or not
      *
      * @param permission permission
-     * @return Returns <code>boolean</code> with value <code>true</code> when rational should be shown
+     * @return Returns <code>boolean</code> with value <code>true</code> when rationale should be shown
      * or <code>false</code> otherwise
      */
-    public static boolean shouldShowRational(@NonNull String permission) {
+    public static boolean shouldShowRationale(@NonNull String permission) {
         return ActivityCompat.shouldShowRequestPermissionRationale(safeActivity(), permission);
     }
 
@@ -141,20 +140,20 @@ public class AllowMe {
     }
 
     /**
-     * Requests the permission, showing the given rational when necessary and calls the registered
+     * Requests the permission, showing the given rationale when necessary and calls the registered
      * callback when permission request operation is performed
      *
      * @param callback        {@link AllowMeCallback} callback method
      * @param requestCode     request code identifier
-     * @param rational        string rational to be shown when appropriate
-     * @param rationalThemeId rational alert dialog theme id
+     * @param rationale        string rationale to be shown when appropriate
+     * @param rationaleThemeId rationale alert dialog theme id
      * @param permission      permission under request
      */
-    private static void requestPermissionWithRational(
+    private static void requestPermissionWithRationale(
             final AllowMeCallback callback,
             final int requestCode,
-            String rational,
-            int rationalThemeId,
+            String rationale,
+            int rationaleThemeId,
             final String permission) {
 
         // healthy check
@@ -164,9 +163,9 @@ public class AllowMe {
         }
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(safeActivity(), permission)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(safeActivity(), rationalThemeId)
+            AlertDialog.Builder builder = new AlertDialog.Builder(safeActivity(), rationaleThemeId)
                     .setTitle("")
-                    .setMessage(rational)
+                    .setMessage(rationale)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -245,42 +244,42 @@ public class AllowMe {
      * Builder class
      */
     public static class Builder {
-        private String rational;
-        private int rationalThemeId = 0;
+        private String rationale;
+        private int rationaleThemeId = 0;
         private String permission;
         private AllowMeCallback callback;
         private String primingMessage;
 
         /**
-         * Set the permission rational message
+         * Set the permission rationale message
          *
-         * @param rational {@link String} rational
+         * @param rationale {@link String} rationale
          * @return {@link Builder}
          */
-        public Builder setRational(@NonNull String rational) {
-            this.rational = rational;
+        public Builder setRationale(@NonNull String rationale) {
+            this.rationale = rationale;
             return this;
         }
 
         /**
-         * Sset the permission rational
+         * Sset the permission rationale
          *
-         * @param res Rational string resource ID
+         * @param res Rationale string resource ID
          * @return {@link Builder}
          */
         public Builder setRational(@StringRes int res) {
-            this.rational = safeActivity().getString(res);
+            this.rationale = safeActivity().getString(res);
             return this;
         }
 
         /**
-         * Set the rational dialog theme
+         * Set the rationale dialog theme
          *
-         * @param rationalThemeId identifier
+         * @param themeId identifier
          * @return {@link Builder}
          */
-        public Builder setRationalThemeId(@IntRange(from = 0, to = Integer.MAX_VALUE) int rationalThemeId) {
-            this.rationalThemeId = rationalThemeId;
+        public Builder setRationaleThemeId(@IntRange(from = 0, to = Integer.MAX_VALUE) int themeId) {
+            this.rationaleThemeId = themeId;
             return this;
         }
 
@@ -331,7 +330,7 @@ public class AllowMe {
             // permission priming ?
             if (this.primingMessage != null && shouldShowPrimingMessage()) {
                 // show the priming message
-                AlertDialog.Builder builder = new AlertDialog.Builder(safeActivity(), rationalThemeId)
+                AlertDialog.Builder builder = new AlertDialog.Builder(safeActivity(), rationaleThemeId)
                         .setTitle("")
                         .setMessage(this.primingMessage)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -343,7 +342,7 @@ public class AllowMe {
                         .setNegativeButton("Not now", null);
 
                 builder.show();
-            } else if (this.primingMessage == null || !shouldShowPrimingMessage()) {
+            } else if (this.primingMessage == null) {
                 // request permission directly
                 requestPermission(Builder.this.callback, requestCode);
             }
@@ -363,7 +362,7 @@ public class AllowMe {
             // permission priming ?
             if (this.primingMessage != null && shouldShowPrimingMessage()) {
                 // show the priming message
-                AlertDialog.Builder builder = new AlertDialog.Builder(safeActivity(), rationalThemeId)
+                AlertDialog.Builder builder = new AlertDialog.Builder(safeActivity(), rationaleThemeId)
                         .setTitle("")
                         .setMessage(this.primingMessage)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -460,10 +459,10 @@ public class AllowMe {
          * @param requestCode permission request code identifier
          */
         private void requestPermission(AllowMeCallback callback, int requestCode) {
-            if (rational == null) {
+            if (rationale == null) {
                 AllowMe.requestPermission(callback, requestCode, this.permission);
             } else {
-                AllowMe.requestPermissionWithRational(callback, requestCode, rational, rationalThemeId, this.permission);
+                AllowMe.requestPermissionWithRationale(callback, requestCode, rationale, rationaleThemeId, this.permission);
             }
         }
 
