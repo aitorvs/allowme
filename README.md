@@ -51,9 +51,9 @@ are enough.
         if (!AllowMe.isPermissionGranted(permission)) {
             new AllowMe.Builder()
                     .setPermissions(permission)
-                    .setRational(rational)
+                    .setRationale(rationale)
                     .setPrimingMessage(primingMessage)
-                    .setRationalThemeId(themeId)
+                    .setRationaleThemeId(themeId)
                     .setCallback(new AllowMeCallback() {
                         @Override
                         public void onPermissionResult(int requestCode, PermissionResultSet result) {
@@ -68,20 +68,31 @@ are enough.
 ```
 
  - `permission` is the permission you need to request
- - `rational` is optional and it is the string message to show when the user denies the permission for the first time
+ - `rationale` is optional and it is the string message to show when the user denies the permission for the first time
  - `primingMessage` is optional and sets the permission priming message dialog that is showed prior to request the permission. 
  In some cases where the dialog requesting the permission appears without any further notice and without enough context, permission priming will help you to put the user in context.
- - `themeId` is optional and allows to style the rational alert dialog
+ - `themeId` is optional and allows to style the rationale alert dialog
  - `requestCode` is an integer to identify the request
 
 The library makes sure that `onPermissionResult` is only called when the `requestCode` matches the user
-input request code. Anyway, the `requestCode` is also returned in the callback in case the user
-wants to double check. Better safe than sorry they say.
+input request code. Anyway, the `requestCode` is also returned in the callback params so that it can 
+also be checked against the original request code.
 
 And that's all it takes.
 
 It is also possible to request the permissions inside fragments, just extend the parent activity from
 `AllowMeActivity` and steps above remain the same.
+
+## Priming vs rationale
+
+The permission rationale dialog appears once the user has denied the permission perviously. It is 
+a way to explain the user why we need the permission. But sometimes the first permission request 
+appears with little or no context and, it is then when priming is important.
+Priming message dialog, when defined, will appear in the first permission request helping to put the 
+user in context as to why the permission is required.
+
+If the user decides not to go ahead after reading the priming message, the permission will not be requested 
+again and the user will need to go to device settings to grant it.
 
 # Use annotated methods instead of callbacks
 
@@ -102,9 +113,9 @@ when the permission request is performed.
             if (!AllowMe.isPermissionGranted(Manifest.permission.READ_CONTACTS)) {
                 new AllowMe.Builder()
                         .setPermissions(Manifest.permission.READ_CONTACTS)
-                        .setRational(rational)
+                        .setRationale(rationale)
                         .setPrimingMessage(primingMessage)
-                        .setRationalThemeId(themeId)
+                        .setRationaleThemeId(themeId)
                         .request(MyActivity.this, requestCode);
             } else {
                 //... handle permission already granted
