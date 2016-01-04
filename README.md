@@ -129,10 +129,12 @@ when the permission request is performed.
     }
 ```
 
-The annotation `OnPermissionResult` an array of permissions in its param `requestedPermissions`.
+The annotation `OnPermissionResult` receives the list of requested permissions in `requestedPermissions` param.
 
-Note that the `request` call of the Builder pattern also receives a first param which is the class that
-will contain the annotated method.
+To use the annotated method, a new `request` call should be used. This call receives two params:
+
+- `Object` with class the annotated method belongs to
+- `int` with the permission request code
 
 The library will then call the annotated method to handle the permission request.
 
