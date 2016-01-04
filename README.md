@@ -136,7 +136,7 @@ To use the annotated method, a new `request` call should be used. This call rece
 - `Object` with class the annotated method belongs to
 - `int` with the permission request code
 
-The library will then call the annotated method to handle the permission request.
+The library will then call the annotated method to handle the permission request result.
 
 Developed By
 ---
