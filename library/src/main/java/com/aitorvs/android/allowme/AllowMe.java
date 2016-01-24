@@ -348,8 +348,8 @@ public class AllowMe {
             }
         }
 
-        public void request(final @NonNull Object handlerClass,
-                            @IntRange(from = 1, to = Integer.MAX_VALUE) int requestCode) {
+        public void requestPermissionForResult(final @NonNull Object handlerClass,
+                                               @IntRange(from = 1, to = Integer.MAX_VALUE) int requestCode) {
             // throw when user forgot the permissions
             throwIfNoPermissions();
             // we don't need the callbacks here because should be using annotated callback

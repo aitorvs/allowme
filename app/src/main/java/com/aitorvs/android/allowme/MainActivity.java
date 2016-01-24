@@ -75,7 +75,7 @@ public class MainActivity extends AllowMeActivity {
                     new AllowMe.Builder()
                             .setPermissions(mPermission)
                             .setRationale("I need read access to contacts for the demo")
-                            .request(MainActivity.this, 69);
+                            .requestPermissionForResult(MainActivity.this, 69);
                 } else {
                     Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
                 }

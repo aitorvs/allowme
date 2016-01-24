@@ -116,7 +116,7 @@ when the permission request is performed.
                         .setRationale(rationale)
                         .setPrimingMessage(primingMessage)
                         .setRationaleThemeId(themeId)
-                        .request(MyActivity.this, requestCode);
+                        .requestPermissionForResult(MyActivity.this, requestCode);
             } else {
                 //... handle permission already granted
             }
@@ -131,7 +131,7 @@ when the permission request is performed.
 
 The annotation `OnPermissionResult` receives the list of requested permissions in `requestedPermissions` param.
 
-To use the annotated method, a new `request` call should be used. This call receives two params:
+To use the annotated method, a new `requestPermissionForResult` call should be used. This call receives two params:
 
 - `Object` with class the annotated method belongs to
 - `int` with the permission request code
