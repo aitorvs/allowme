@@ -64,7 +64,10 @@ public class AllowMe {
     }
 
     public static void unregisterActivity(@NonNull Activity activity) {
-        if (activity == getInstance().mActivity) {
+        //noinspection ConstantConditions
+        if (getInstance().mActivity == null || activity == null) {
+            Log.w(TAG, "Trying to unregister null activity");
+        }else if (activity.getClass().getName().equals(getInstance().mActivity.getClass().getName())) {
             getInstance().mActivity = null;
         } else {
             Log.w(TAG, "unregisterActivity: Old activity is trying to unregister");
@@ -75,7 +78,7 @@ public class AllowMe {
     private static Activity safeActivity() {
         Activity activity = getInstance().mActivity;
         if (activity == null) {
-            throw new IllegalStateException("Activity not registered");
+            throw new IllegalStateException("Ooops!! Activity not registered (?)");
         }
 
         return activity;

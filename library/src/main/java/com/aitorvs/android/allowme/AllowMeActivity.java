@@ -30,12 +30,28 @@ public class AllowMeActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        // on visible
         AllowMe.registerActivity(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // on  begin interaction
+        AllowMe.registerActivity(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // on stop interaction
+        AllowMe.unregisterActivity(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        // on invisible
         AllowMe.unregisterActivity(this);
     }
 
