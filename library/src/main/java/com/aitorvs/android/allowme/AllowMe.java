@@ -270,7 +270,7 @@ public class AllowMe {
          * @param res Rationale string resource ID
          * @return {@link Builder}
          */
-        public Builder setRational(@StringRes int res) {
+        public Builder setRationale(@StringRes int res) {
             this.rationale = safeActivity().getString(res);
             return this;
         }
