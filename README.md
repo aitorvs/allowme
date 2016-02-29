@@ -22,7 +22,7 @@ dependencies {
 
     // ... other dependencies here
 
-    compile 'com.github.aitorvs:allowme:0.3.0'
+    compile 'com.github.aitorvs:allowme:0.3.1'
 }
 ```
 --
