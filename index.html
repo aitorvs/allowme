@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Allowme by aitorvs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Allowme</h1>
+      <h2 class="project-tagline">Simple library to handle Android M permissions</h2>
+      <a href="https://github.com/aitorvs/allowme" class="btn">View on GitHub</a>
+      <a href="https://github.com/aitorvs/allowme/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/aitorvs/allowme/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="allowme" class="anchor" href="#allowme" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>AllowMe</h1>
+
+<p>AllowMe simple library to handle Android M permissions easily.</p>
+
+<h1>
+<a id="gradle-dependency" class="anchor" href="#gradle-dependency" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Gradle Dependency</h1>
+
+<p><a href="https://jitpack.io/#aitorvs/allowme"><img src="https://img.shields.io/github/release/aitorvs/allowme.svg?label=jitpack" alt="Release"></a></p>
+
+<h3>
+<a id="repository" class="anchor" href="#repository" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Repository</h3>
+
+<div class="highlight highlight-source-groovy-gradle"><pre><span class="pl-en">repositories</span> {
+    maven { url <span class="pl-s"><span class="pl-pds">"</span>https://jitpack.io<span class="pl-pds">"</span></span> }
+}</pre></div>
+
+<h3>
+<a id="dependency" class="anchor" href="#dependency" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dependency</h3>
+
+<div class="highlight highlight-source-groovy-gradle"><pre><span class="pl-en">dependencies</span> {
+
+    <span class="pl-c">// ... other dependencies here</span>
+
+    compile <span class="pl-s"><span class="pl-pds">'</span>com.github.aitorvs:allowme:0.3.2<span class="pl-pds">'</span></span>
+}</pre></div>
+
+<h2></h2>
+
+<h1>
+<a id="basics" class="anchor" href="#basics" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Basics</h1>
+
+<p>The library simplifies the task of requesting permissions for Android M. Just one call and one callback
+are enough.</p>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+
+<ol>
+<li>
+<p>Extend your activity from AllowMeActivity (which extends <code>AppCompatActivity</code>)</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">MyPermissionsActivity</span> <span class="pl-k">extends</span> <span class="pl-e">AllowMeActivity</span> {
+  <span class="pl-c">//... more code here</span>
+
+}</pre></div>
+</li>
+<li><p>Request the permission and register the callback for handling. All in one call</p></li>
+</ol>
+
+<div class="highlight highlight-source-java"><pre>        <span class="pl-c">//... more code here</span>
+
+        <span class="pl-k">if</span> (<span class="pl-k">!</span><span class="pl-smi">AllowMe</span><span class="pl-k">.</span>isPermissionGranted(permission)) {
+            <span class="pl-k">new</span> <span class="pl-smi">AllowMe</span>.<span class="pl-smi">Builder</span>()
+                    .setPermissions(permission)
+                    .setRationale(rationale)
+                    .setPrimingMessage(primingMessage)
+                    .setRationaleThemeId(themeId)
+                    .setCallback(<span class="pl-k">new</span> <span class="pl-smi">AllowMeCallback</span>() {
+                        <span class="pl-k">@Override</span>
+                        <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onPermissionResult</span>(<span class="pl-k">int</span> <span class="pl-v">requestCode</span>, <span class="pl-smi">PermissionResultSet</span> <span class="pl-v">result</span>) {
+                            <span class="pl-k">if</span> (result<span class="pl-k">.</span>isGranted(permission)) {
+                                <span class="pl-c">//... permission is granted, handle here</span>
+                            }
+                        }
+                    })<span class="pl-k">.</span>request(requestCode);
+        } <span class="pl-k">else</span> {
+            <span class="pl-c">//... handle permission already granted</span>
+        }</pre></div>
+
+<ul>
+<li>
+<code>permission</code> is the permission you need to request</li>
+<li>
+<code>rationale</code> is optional and it is the string message to show when the user denies the permission for the first time</li>
+<li>
+<code>primingMessage</code> is optional and sets the permission priming message dialog that is showed prior to request the permission. 
+In some cases where the dialog requesting the permission appears without any further notice and without enough context, permission priming will help you to put the user in context.</li>
+<li>
+<code>themeId</code> is optional and allows to style the rationale alert dialog</li>
+<li>
+<code>requestCode</code> is an integer to identify the request</li>
+</ul>
+
+<p>The library makes sure that <code>onPermissionResult</code> is only called when the <code>requestCode</code> matches the user
+input request code. Anyway, the <code>requestCode</code> is also returned in the callback params so that it can 
+also be checked against the original request code.</p>
+
+<p>And that's all it takes.</p>
+
+<p>It is also possible to request the permissions inside fragments, just extend the parent activity from
+<code>AllowMeActivity</code> and steps above remain the same.</p>
+
+<h2>
+<a id="priming-vs-rationale" class="anchor" href="#priming-vs-rationale" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Priming vs rationale</h2>
+
+<p>The permission rationale dialog appears once the user has denied the permission perviously. It is 
+a way to explain the user why we need the permission. But sometimes the first permission request 
+appears with little or no context and, it is then when priming is important.
+Priming message dialog, when defined, will appear in the first permission request helping to put the 
+user in context as to why the permission is required.</p>
+
+<p>If the user decides not to go ahead after reading the priming message, the permission will not be requested 
+again and the user will need to go to device settings to grant it.</p>
+
+<h1>
+<a id="use-annotated-methods-instead-of-callbacks" class="anchor" href="#use-annotated-methods-instead-of-callbacks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Use annotated methods instead of callbacks</h1>
+
+<p>It is possible to, instead of using callback methods, use annotations to define the method to be called
+when the permission request is performed.</p>
+
+<div class="highlight highlight-source-java"><pre>
+    <span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">MyActivity</span> <span class="pl-k">extends</span> <span class="pl-e">AllowMeActivity</span> {
+
+        <span class="pl-k">@Override</span>
+        <span class="pl-k">protected</span> <span class="pl-k">void</span> <span class="pl-en">onCreate</span>(<span class="pl-smi">Bundle</span> <span class="pl-v">savedInstanceState</span>) {
+            <span class="pl-v">super</span><span class="pl-k">.</span>onCreate(savedInstanceState);
+
+            <span class="pl-c">//... more code here</span>
+
+            <span class="pl-k">int</span> requestCode <span class="pl-k">=</span> <span class="pl-c1">69</span>;
+            <span class="pl-k">if</span> (<span class="pl-k">!</span><span class="pl-smi">AllowMe</span><span class="pl-k">.</span>isPermissionGranted(<span class="pl-smi">Manifest</span><span class="pl-k">.</span><span class="pl-smi">permission<span class="pl-k">.</span>READ_CONTACTS</span>)) {
+                <span class="pl-k">new</span> <span class="pl-smi">AllowMe</span>.<span class="pl-smi">Builder</span>()
+                        .setPermissions(<span class="pl-smi">Manifest</span><span class="pl-k">.</span><span class="pl-smi">permission<span class="pl-k">.</span>READ_CONTACTS</span>)
+                        .setRationale(rationale)
+                        .setPrimingMessage(primingMessage)
+                        .setRationaleThemeId(themeId)
+                        .requestPermissionForResult(<span class="pl-smi">MyActivity</span><span class="pl-k">.</span><span class="pl-v">this</span>, requestCode);
+            } <span class="pl-k">else</span> {
+                <span class="pl-c">//... handle permission already granted</span>
+            }
+        }
+
+        <span class="pl-k">@OnPermissionResult</span>(<span class="pl-c1">requestedPermissions</span> <span class="pl-k">=</span> {<span class="pl-smi">Manifest</span><span class="pl-k">.</span><span class="pl-smi">permission<span class="pl-k">.</span>READ_CONTACTS</span>})
+        <span class="pl-k">void</span> <span class="pl-en">permissionRequestHandler</span>(<span class="pl-k">int</span> <span class="pl-v">requestCode</span>, <span class="pl-smi">PermissionResultSet</span> <span class="pl-v">result</span>) {
+            <span class="pl-c">//... handle result</span>
+        }
+    }</pre></div>
+
+<p>The annotation <code>OnPermissionResult</code> receives the list of requested permissions in <code>requestedPermissions</code> param.</p>
+
+<p>To use the annotated method, a new <code>requestPermissionForResult</code> call should be used. This call receives two params:</p>
+
+<ul>
+<li>
+<code>Object</code> with class the annotated method belongs to</li>
+<li>
+<code>int</code> with the permission request code</li>
+</ul>
+
+<p>The library will then call the annotated method to handle the permission request result.</p>
+
+<h2>
+<a id="developed-by" class="anchor" href="#developed-by" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Developed By</h2>
+
+<p>Aitor Viana Sanchez - <a href="mailto:aitor.viana.sanchez@gmail.com">aitor.viana.sanchez@gmail.com</a>&gt;</p>
+
+<p><a href="https://twitter.com/aitorvs">
+  <img alt="Follow me on Twitter" src="https://raw.github.com/ManuelPeinado/NumericPageIndicator/master/art/twitter.png">
+</a>
+<a href="https://plus.google.com/+AitorViana">
+  <img alt="Follow me on Twitter" src="https://raw.github.com/ManuelPeinado/NumericPageIndicator/master/art/google-plus.png">
+</a>
+<a href="https://www.linkedin.com/in/aitorvs">
+  <img alt="Follow me on Twitter" src="https://raw.github.com/ManuelPeinado/NumericPageIndicator/master/art/linkedin.png"></a></p>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
+
+<p>Apache 2.0</p>
+
+<pre><code>Copyright 2015 aitorvs, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+</code></pre>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/aitorvs/allowme">Allowme</a> is maintained by <a href="https://github.com/aitorvs">aitorvs</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
