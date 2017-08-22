@@ -1,3 +1,4 @@
+DEPRECATED: I found a [much better](https://github.com/permissions-dispatcher/PermissionsDispatcher) and elegant solution that I am now using instead.
 # AllowMe
 
 AllowMe simple library to handle Android M permissions easily.
